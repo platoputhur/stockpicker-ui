@@ -64,7 +64,7 @@ export default {
     };
   },
   mounted() {
-    this.axios.get("http://127.0.0.1:8000/shortlist/get/latest").then((response) => {
+    this.axios.get("https://stockapi.techtuft.com/shortlist/get/latest").then((response) => {
       if (response.data.success === true) {
         this.shortListedStocks = response.data.shortlisted_stocks;
         this.populateTableData(this.shortListedStocks);
