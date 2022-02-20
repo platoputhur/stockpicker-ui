@@ -16,7 +16,6 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           yarn build
-          scp -i ${{ secrets.KEY }} -r ./dist ${{ secrets.USERNAME }}@${{ secrets.HOST }}:./
       - uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
