@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy StockPicker UI
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Building vue and transfering files to ssh host
+        run: |
+          yarn install --frozen-lockfile
+          yarn build
+          scp -i ${{ secrets.KEY }} -r ./dist ${{ secrets.USERNAME }}@${{ secrets.HOST }}:./
+      - name: SSH and Copy files to the right dir in the host
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            sudo mv ./dist /var/www/techtuft.com/html/spui
