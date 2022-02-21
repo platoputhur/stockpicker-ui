@@ -4,8 +4,7 @@ import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
 import vueMeta from './plugins/vuemeta'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
+import axios from './plugins/axios'
 
 Vue.config.productionTip = false
 
@@ -14,7 +13,6 @@ new Vue({
   store,
   vuetify,
   vueMeta,
+  axios,
   render: h => h(App)
 }).$mount('#app')
-
-Vue.use(VueAxios, axios)

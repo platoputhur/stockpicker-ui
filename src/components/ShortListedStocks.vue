@@ -6,6 +6,7 @@
       :items-per-page="10"
       class="elevation-1"
       dark
+      :loading="loadingFlag"
   >
     <template v-slot:header >
       <thead>
@@ -40,6 +41,7 @@ export default {
     return {
       shortListedStocks: [],
       errorFlag: false,
+      loadingFlag: true,
       errorMessage: "",
       headers: [
         {
@@ -63,8 +65,18 @@ export default {
       daym2: "",
     };
   },
+  props: {
+    shortlistOffset: {
+      type: Number,
+      default: 0
+    }
+  },
   mounted() {
-    this.axios.get("https://stockapi.techtuft.com/shortlist/get/latest").then((response) => {
+    let shortListUrl = "shortlist/get/latest"
+    if (this.shortlistOffset !== 0) {
+      shortListUrl = "shortlist/get/" + this.shortlistOffset
+    }
+    this.axios.get(shortListUrl).then((response) => {
       if (response.data.success === true) {
         this.shortListedStocks = response.data.shortlisted_stocks;
         this.populateTableData(this.shortListedStocks);
@@ -73,12 +85,17 @@ export default {
         this.daym2 = this.shortListedStocks[0].price_actions[2].price_date;
       } else {
         this.errorMessage = response.data.message;
+        if (response.data.shortlisted_stocks.length === 0) {
+          this.$emit('no-more-shortlisted-stocks-event', this.shortlistOffset);
+        }
       }
     })
     .catch((error) => {
       this.errorFlag = true;
       this.errorMessage = error.message;
-    })
+    }).finally(() => {
+      this.loadingFlag = false;
+    });
   },
   methods: {
     getOpeningAndClosingPrices(priceAction) {
