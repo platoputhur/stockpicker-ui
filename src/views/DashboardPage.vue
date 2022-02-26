@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-spacer/>
-      <v-col cols="10">
+      <v-col cols="12">
         <ShortListedStocks />
       </v-col>
       <v-spacer/>
