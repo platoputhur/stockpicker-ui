@@ -12,6 +12,7 @@
       <thead>
       <tr>
         <th></th>
+        <th></th>
         <th colspan="2" class="text--black text-h6">{{ daym2 }}</th>
         <th colspan="2" class="text--black text-h6">{{ daym1 }}</th>
         <th colspan="2" class="text--black text-h6">{{ daym0 }}</th>
@@ -19,6 +20,65 @@
         <th></th>
       </tr>
       </thead>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.stockName="{ item }">
+      <a v-if="item.stockDetailsUrl"
+         target="_blank"
+         :href="item.stockDetailsUrl"
+         class="teal--text text--lighten-3 text-decoration-none">
+        <span class="">{{ item.stockName }}</span>
+      </a>
+      <span v-else>{{ item.stockName }}</span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.sectorName="{ item }">
+      <span v-if="item.sectorName">
+        <a v-if="item.sectorDetailsUrl"
+           target="_blank"
+           :href="item.sectorDetailsUrl"
+           class="teal--text text--lighten-3 text-decoration-none">
+          <span v-if="shortenSectorName(item.sectorName).length > 1" class="">
+            <v-tooltip top color="teal">
+              <template v-slot:activator="{ on, attrs }">
+                <span
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  {{ shortenSectorName(item.sectorName)[0] + "..." }}
+                </span>
+              </template>
+              <span>{{ item.sectorName }}</span>
+            </v-tooltip>
+          </span>
+          <span v-else>
+            {{ shortenSectorName(item.sectorName)[0] }}
+          </span>
+        </a>
+        <span v-else>
+          <span v-if="shortenSectorName(item.sectorName).length > 1" class="">
+            <v-tooltip top color="teal">
+              <template v-slot:activator="{ on, attrs }">
+                <span
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  {{ shortenSectorName(item.sectorName)[0] + "..." }}
+                </span>
+              </template>
+              <span>{{ item.sectorName }}</span>
+            </v-tooltip>
+          </span>
+          <span v-else>
+            {{ shortenSectorName(item.sectorName)[0] }}
+          </span>
+        </span>
+      </span>
+      <span v-else>
+        N/A
+      </span>
     </template>
   </v-data-table>
   <ErrorPopup v-if="errorFlag"  :error-message="errorMessage"/>
@@ -50,6 +110,7 @@ export default {
           sortable: false,
           value: 'stockName',
         },
+        { text: 'Sector', value: 'sectorName' },
         { text: 'Opening', value: 'dminus2start' },
         { text: 'Closing', value: 'dminus2end' },
         { text: 'Opening', value: 'dminus1start' },
@@ -134,6 +195,9 @@ export default {
       this.shortListedStocks.forEach(stock => {
         let paObject = {
           stockName: this.convertToTitleCase(stock.stock_name.replace("-", " ")),
+          stockDetailsUrl: stock.stock_url,
+          sectorDetailsUrl: stock.stock_sector_url,
+          sectorName: stock.stock_sector_name,
           dminus2start: this.getOpeningAndClosingPrices(stock.price_actions[2])[0],
           dminus2end: this.getOpeningAndClosingPrices(stock.price_actions[2])[1],
           dminus1start: this.getOpeningAndClosingPrices(stock.price_actions[1])[0],
@@ -150,8 +214,11 @@ export default {
       return word_or_sentence.toLowerCase().split(' ').map(function(word) {
         return word.replace(word[0], word[0].toUpperCase());
       }).join(' ');
+    },
+    shortenSectorName(sectorName) {
+      return String(sectorName).split(" ");
     }
-  }
+  },
 }
 </script>
 
