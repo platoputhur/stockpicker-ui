@@ -32,6 +32,38 @@
       <span v-else>{{ item.stockName }}</span>
     </template>
     <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.bs="{ item }">
+      Buy: <v-chip
+          color="green"
+          class="my-1"
+          small
+          label
+          dark
+      >
+        {{ item.bs[0] }}
+      </v-chip><br />
+      Sell: <v-chip
+          color="red"
+          class="my-1"
+          small
+          label
+          dark
+      >
+        {{ item.bs[1] }}
+      </v-chip>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.sl="{ item }">
+      <v-chip
+        color="orange"
+        small
+        label
+        dark
+      >
+        {{ item.sl }}
+      </v-chip>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
     <template v-slot:item.sectorName="{ item }">
       <span v-if="item.sectorName">
         <a v-if="item.sectorDetailsUrl"
@@ -119,6 +151,9 @@ export default {
         { text: 'Closing', value: 'dminus0end' },
         { text: 'Average Gain', value: 'avg' },
         { text: 'Profit %', value: 'profit' },
+        { text: 'Buy/Sell', value: 'bs' },
+        { text: 'Stop Loss', value: 'sl' },
+        { text: 'F Profit', value: 'fp' },
       ],
       priceActionsForTable: [],
       daym0: "",
@@ -191,6 +226,19 @@ export default {
       let day_3_percentage = (this.getOpeningAndClosingPrices(priceAction.price_actions[0])[1] - this.getOpeningAndClosingPrices(priceAction.price_actions[0])[0])/this.getOpeningAndClosingPrices(priceAction.price_actions[0])[0] * 100;
       return _.round((day_1_percentage + day_2_percentage + day_3_percentage) / 3, 2);
     },
+    getBuySellPrices(stock) {
+      let buy_price =  _.round(this.getOpeningAndClosingPrices(stock.price_actions[0])[1], 2);
+      let sell_price =  _.round(buy_price + this.getAverageGain(stock), 2);
+      return [buy_price.toFixed(2), sell_price.toFixed(2)];
+    },
+    getStopLossPrice(stock) {
+      return  _.round(this.getOpeningAndClosingPrices(stock.price_actions[0])[1] - (this.getAverageGain(stock) / 3), 2);
+    },
+    getForecastedProfit(stock) {
+      let b_s = this.getBuySellPrices(stock);
+      return _.round((((parseFloat(b_s[1]) - parseFloat(b_s[0]))/parseFloat(b_s[0])) * 100), 2);
+
+    },
     populateTableData() {
       this.shortListedStocks.forEach(stock => {
         let paObject = {
@@ -206,6 +254,9 @@ export default {
           dminus0end: this.getOpeningAndClosingPrices(stock.price_actions[0])[1],
           avg: this.getAverageGain(stock),
           profit: this.getProfitPercentage(stock),
+          bs: this.getBuySellPrices(stock),
+          sl: this.getStopLossPrice(stock).toFixed(2),
+          fp: this.getForecastedProfit(stock)
         }
         this.priceActionsForTable.push(paObject);
       });
