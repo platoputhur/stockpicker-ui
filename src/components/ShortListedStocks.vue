@@ -1,8 +1,19 @@
 <template>
-<v-card>
+<v-card dark>
+  <v-card-title class="align-baseline">
+    <span class="mr-10">Short Listed Stocks</span>
+    <v-text-field
+        v-model="search"
+        prepend-inner-icon="mdi-magnify"
+        label="Search"
+        single-line
+        hide-details
+    ></v-text-field>
+  </v-card-title>
   <v-data-table
       :headers="headers"
       :items="priceActionsForTable"
+      :search="search"
       :items-per-page="10"
       class="elevation-1"
       dark
@@ -131,6 +142,7 @@ export default {
   },
   data() {
     return {
+      search: '',
       shortListedStocks: [],
       errorFlag: false,
       loadingFlag: true,
