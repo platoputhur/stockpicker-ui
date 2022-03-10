@@ -47,7 +47,7 @@
       Buy: <v-chip
           color="green"
           class="my-1"
-          small
+          x-small
           label
           dark
       >
@@ -56,7 +56,7 @@
       Sell: <v-chip
           color="red"
           class="my-1"
-          small
+          x-small
           label
           dark
       >
@@ -67,7 +67,7 @@
     <template v-slot:item.sl="{ item }">
       <v-chip
         color="orange"
-        small
+        x-small
         label
         dark
       >
@@ -162,6 +162,7 @@ export default {
         { text: 'Opening', value: 'dminus0start' },
         { text: 'Closing', value: 'dminus0end' },
         { text: 'Average Gain', value: 'avg' },
+        // { text: '3rd, 5th, 8th Gains', value: 'multiGains' },
         { text: 'Profit %', value: 'profit' },
         { text: 'Buy/Sell', value: 'bs' },
         { text: 'Stop Loss', value: 'sl' },
@@ -254,7 +255,7 @@ export default {
     populateTableData() {
       this.shortListedStocks.forEach(stock => {
         let paObject = {
-          stockName: this.convertToTitleCase(stock.stock_name.replace("-", " ")),
+          stockName: this.convertToTitleCase(stock.stock_name.replaceAll("-", " ").trim()),
           stockDetailsUrl: stock.stock_url,
           sectorDetailsUrl: stock.stock_sector_url,
           sectorName: stock.stock_sector_name,
@@ -265,6 +266,7 @@ export default {
           dminus0start: this.getOpeningAndClosingPrices(stock.price_actions[0])[0],
           dminus0end: this.getOpeningAndClosingPrices(stock.price_actions[0])[1],
           avg: this.getAverageGain(stock),
+          // multiGain: this.getMultiGains(stock),
           profit: this.getProfitPercentage(stock),
           bs: this.getBuySellPrices(stock),
           sl: this.getStopLossPrice(stock).toFixed(2),
