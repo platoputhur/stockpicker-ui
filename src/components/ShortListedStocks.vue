@@ -43,8 +43,32 @@
       <span v-else>{{ item.stockName }}</span>
     </template>
     <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.dminus2start="{ item }">
+      <span class="small-font">{{ item.dminus2start.price }}<small> ({{ item.dminus2start.time }}) </small></span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.dminus2end="{ item }">
+      <span class="small-font">{{ item.dminus2end.price }}<small> ({{ item.dminus2end.time }}) </small></span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.dminus1start="{ item }">
+      <span class="small-font">{{ item.dminus1start.price }}<small> ({{ item.dminus1start.time }}) </small></span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.dminus1end="{ item }">
+      <span class="small-font">{{ item.dminus1end.price }}<small> ({{ item.dminus1end.time }}) </small></span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.dminus0start="{ item }">
+      <span class="small-font">{{ item.dminus0start.price }}<small> ({{ item.dminus0start.time }}) </small></span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.dminus0end="{ item }">
+      <span class="small-font">{{ item.dminus0end.price }}<small> ({{ item.dminus0end.time }}) </small></span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
     <template v-slot:item.bs="{ item }">
-      Buy: <v-chip
+      <span class="small-font">Buy:</span> <v-chip
           color="green"
           class="my-1"
           x-small
@@ -53,7 +77,7 @@
       >
         {{ item.bs[0] }}
       </v-chip><br />
-      Sell: <v-chip
+      <span class="small-font">Sell:</span> <v-chip
           color="red"
           class="my-1"
           x-small
@@ -227,6 +251,26 @@ export default {
       hourly_prices = hourly_prices.filter(price => price !== 0)
       return [hourly_prices[0], hourly_prices[hourly_prices.length - 1]];
     },
+    getOpeningAndClosingPricesWithTime(priceAction) {
+      let hourly_prices = [
+        {time: 9, price: priceAction.hour_1_start},
+        {time: 10, price: priceAction.hour_1_end},
+        {time: 10, price: priceAction.hour_2_start},
+        {time: 11, price: priceAction.hour_2_end},
+        {time: 11, price: priceAction.hour_3_start},
+        {time: 12, price: priceAction.hour_3_end},
+        {time: 12, price: priceAction.hour_4_start},
+        {time: 1, price: priceAction.hour_4_end},
+        {time: 1, price: priceAction.hour_5_start},
+        {time: 2, price: priceAction.hour_5_end},
+        {time: 2, price: priceAction.hour_6_start},
+        {time: 3, price: priceAction.hour_6_end},
+        {time: 3, price: priceAction.hour_7_start},
+        {time: 4, price: priceAction.hour_7_end},
+      ];
+      hourly_prices = hourly_prices.filter(hourlyPrice => hourlyPrice.price !== 0)
+      return [hourly_prices[0], hourly_prices[hourly_prices.length - 1]];
+    },
     getAverageGain(priceAction) {
       let day_1_diff = this.getOpeningAndClosingPrices(priceAction.price_actions[2])[1] - this.getOpeningAndClosingPrices(priceAction.price_actions[2])[0];
       let day_2_diff = this.getOpeningAndClosingPrices(priceAction.price_actions[1])[1] - this.getOpeningAndClosingPrices(priceAction.price_actions[1])[0];
@@ -259,12 +303,12 @@ export default {
           stockDetailsUrl: stock.stock_url,
           sectorDetailsUrl: stock.stock_sector_url,
           sectorName: stock.stock_sector_name,
-          dminus2start: this.getOpeningAndClosingPrices(stock.price_actions[2])[0],
-          dminus2end: this.getOpeningAndClosingPrices(stock.price_actions[2])[1],
-          dminus1start: this.getOpeningAndClosingPrices(stock.price_actions[1])[0],
-          dminus1end: this.getOpeningAndClosingPrices(stock.price_actions[1])[1],
-          dminus0start: this.getOpeningAndClosingPrices(stock.price_actions[0])[0],
-          dminus0end: this.getOpeningAndClosingPrices(stock.price_actions[0])[1],
+          dminus2start: this.getOpeningAndClosingPricesWithTime(stock.price_actions[2])[0],
+          dminus2end: this.getOpeningAndClosingPricesWithTime(stock.price_actions[2])[1],
+          dminus1start: this.getOpeningAndClosingPricesWithTime(stock.price_actions[1])[0],
+          dminus1end: this.getOpeningAndClosingPricesWithTime(stock.price_actions[1])[1],
+          dminus0start: this.getOpeningAndClosingPricesWithTime(stock.price_actions[0])[0],
+          dminus0end: this.getOpeningAndClosingPricesWithTime(stock.price_actions[0])[1],
           avg: this.getAverageGain(stock),
           // multiGain: this.getMultiGains(stock),
           profit: this.getProfitPercentage(stock),
@@ -288,5 +332,7 @@ export default {
 </script>
 
 <style scoped>
-
+.small-font {
+  font-size: 0.8em!important;
+}
 </style>
