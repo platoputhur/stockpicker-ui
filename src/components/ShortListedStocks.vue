@@ -18,10 +18,12 @@
       class="elevation-1"
       dark
       :loading="loadingFlag"
+      multi-sort
   >
     <template v-slot:header >
       <thead>
       <tr>
+        <th></th>
         <th></th>
         <th></th>
         <th colspan="2" class="text--black text-h6">{{ daym2 }}</th>
@@ -38,9 +40,42 @@
          target="_blank"
          :href="item.stockDetailsUrl"
          class="teal--text text--lighten-3 text-decoration-none">
-        <span class="">{{ item.stockName }}</span>
+        <span class="">
+          <v-tooltip v-if="item.stockSymbol" top color="teal">
+              <template v-slot:activator="{ on, attrs }">
+                <span
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                >
+                  {{ item.stockName }} <span class="white--text">&#9432;</span>
+                </span>
+              </template>
+              <span>{{ "SYMBOL: " + item.stockSymbol }}</span>
+            </v-tooltip>
+            <span v-else>{{ item.stockName }}</span>
+        </span>
       </a>
-      <span v-else>{{ item.stockName }}</span>
+      <span v-else>
+        <v-tooltip v-if="item.stockSymbol" top color="teal">
+            <template v-slot:activator="{ on, attrs }">
+              <span
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+              >
+                {{ item.stockName }} <span class="white--text">&#9432;</span>
+              </span>
+            </template>
+            <span>{{ "SYMBOL: " + item.stockSymbol }}</span>
+          </v-tooltip>
+        <span v-else>{{ item.stockName }}</span>
+      </span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.intradayAllowed="{ item }">
+      <span v-if="item.intradayAllowed === true"> <v-icon light class="green--text">mdi-check-circle</v-icon> </span>
+      <span v-else> <v-icon class="red--text">mdi-close-thick</v-icon> </span>
     </template>
     <!-- eslint-disable-next-line vue/valid-v-slot -->
     <template v-slot:item.dminus2start="{ item }">
@@ -178,6 +213,7 @@ export default {
           sortable: false,
           value: 'stockName',
         },
+        { text: 'IDO', value: 'intradayAllowed' },
         { text: 'Sector', value: 'sectorName' },
         { text: 'Opening', value: 'dminus2start' },
         { text: 'Closing', value: 'dminus2end' },
@@ -300,8 +336,10 @@ export default {
       this.shortListedStocks.forEach(stock => {
         let paObject = {
           stockName: this.convertToTitleCase(stock.stock_name.replaceAll("-", " ").trim()),
+          stockSymbol: stock.symbol,
           stockDetailsUrl: stock.stock_url,
           sectorDetailsUrl: stock.stock_sector_url,
+          intradayAllowed: stock.is_intraday_allowed,
           sectorName: stock.stock_sector_name,
           dminus2start: this.getOpeningAndClosingPricesWithTime(stock.price_actions[2])[0],
           dminus2end: this.getOpeningAndClosingPricesWithTime(stock.price_actions[2])[1],
