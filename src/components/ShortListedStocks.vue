@@ -356,6 +356,7 @@ export default {
         }
         this.priceActionsForTable.push(paObject);
       });
+      this.$store.dispatch('setPriceActions', this.priceActionsForTable);
     },
     convertToTitleCase(word_or_sentence) {
       return word_or_sentence.toLowerCase().split(' ').map(function(word) {
