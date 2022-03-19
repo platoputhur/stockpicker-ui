@@ -1,10 +1,10 @@
 <template>
   <v-container fluid>
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12" lg="6">
         <SectorialChart />
       </v-col>
-      <v-col cols="6">
+      <v-col cols="12" lg="6">
         <SectorialIndices />
       </v-col>
     </v-row>
