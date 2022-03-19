@@ -14,11 +14,14 @@
       :headers="headers"
       :items="priceActionsForTable"
       :search="search"
+      item-key="stockName"
       :items-per-page="10"
       class="elevation-1"
       dark
       :loading="loadingFlag"
       multi-sort
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
   >
     <template v-slot:header >
       <thead>
@@ -214,6 +217,8 @@ export default {
       errorFlag: false,
       loadingFlag: true,
       errorMessage: "",
+      sortBy: 'intradayAllowed',
+      sortDesc: true,
       headers: [
         {
           text: 'Stock Name',

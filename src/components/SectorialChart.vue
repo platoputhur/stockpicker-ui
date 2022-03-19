@@ -3,7 +3,7 @@
     <v-card-title class="align-baseline">
       Sectorial Chart
     </v-card-title>
-    <apexchart id="sectorial-data"  type="donut" :options="options" :series="totalProfits"></apexchart>
+    <apexchart id="sectorial-data"  type="pie" :options="options" :series="stocksCount"></apexchart>
   </v-card>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   name: "SectorialChart",
   data() {
     return {
-      totalProfits: [],
+      stocksCount: [],
       options: {
         chart: {
           id: 'sectorial-data'
@@ -41,19 +41,20 @@ export default {
       priceActions.forEach(priceAction => {
         let sectorName = priceAction.sectorName
         let sectorDetailsUrl = priceAction.sectorDetailsUrl
-        let profitPercentage = priceAction.profit
         if (Object.hasOwn(sectorLevelPriceActions, sectorDetailsUrl)) {
-          sectorLevelPriceActions[sectorDetailsUrl].totalProfits += profitPercentage;
+          sectorLevelPriceActions[sectorDetailsUrl].stocksCount += 1;
         } else {
           sectorLevelPriceActions[sectorDetailsUrl] = {
             "sectorName": sectorName,
-            "totalProfits": profitPercentage
+            "stocksCount": 1
           }
         }
       });
-      Object.entries(sectorLevelPriceActions).forEach((sector) => {
-        this.options.labels.push(sector[1]["sectorName"])
-        this.totalProfits.push(_.round(sector[1]["totalProfits"], 2))
+      let sectorLevelPriceActionsArray = Object.values(sectorLevelPriceActions)
+      let sectorLevelPriceActionsArraySorted = _.orderBy(sectorLevelPriceActionsArray, ['stocksCount'], ['desc'])
+      sectorLevelPriceActionsArraySorted.slice(0, 10).forEach((sector) => {
+        this.options.labels.push(sector["sectorName"])
+        this.stocksCount.push(_.round(sector["stocksCount"], 2))
       })
     }
   }
