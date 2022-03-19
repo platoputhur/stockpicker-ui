@@ -102,6 +102,14 @@
       <span class="small-font">{{ item.dminus0end.price }}<small> ({{ item.dminus0end.time }}) </small></span>
     </template>
     <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.avg="{ item }">
+      <span class="small-font">{{ item.avg }}</span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.profit="{ item }">
+      <span class="small-font">{{ item.profit }}</span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
     <template v-slot:item.bs="{ item }">
       <span class="small-font">Buy:</span> <v-chip
           color="green"
@@ -224,7 +232,7 @@ export default {
         { text: 'Average Gain', value: 'avg' },
         // { text: '3rd, 5th, 8th Gains', value: 'multiGains' },
         { text: 'Profit %', value: 'profit' },
-        { text: 'Buy/Sell', value: 'bs' },
+        { text: 'Buy / Sell Price', value: 'bs' },
         { text: 'Stop Loss', value: 'sl' },
         { text: 'F Profit', value: 'fp' },
       ],

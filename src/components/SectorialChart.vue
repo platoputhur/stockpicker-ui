@@ -1,5 +1,5 @@
 <template>
-  <v-card dark class="white--text py-5">
+  <v-card dark class="white--text pb-5">
     <v-card-title class="align-baseline">
       Sectorial Chart
     </v-card-title>
