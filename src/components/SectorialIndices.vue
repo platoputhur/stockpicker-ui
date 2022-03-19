@@ -7,13 +7,14 @@
       <v-data-table
           :headers="headers"
           :items="sectorialIndicesForTable"
-          :items-per-page="10"
+          :items-per-page="5"
           class="elevation-1"
           :loading="loadingFlag"
-          :single-expand="true"
+          :single-expand="false"
           :expanded.sync="expanded"
           item-key="index_name"
           show-expand
+          multi-sort
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
       >
@@ -53,11 +54,18 @@
           <td :colspan="headers.length">
             Sub Sectors:
             <ul>
-              <li v-for="subSector in item.sectors" :key="subSector.sector_name">
+              <li v-for="subSector in item.sectors" :key="subSector.sector_url">
                 <a :href="subSector.sector_url">{{ subSector.sector_name }}</a>
+                <span> ({{ getStocksCountForSubSector(subSector.sector_url) }} Stocks) </span>
               </li>
             </ul>
           </td>
+        </template>
+        <!-- eslint-disable-next-line vue/valid-v-slot -->
+        <template v-slot:item.stocks_count="{ item }">
+          <span>
+              {{ item.stocks_count }}
+          </span>
         </template>
       </v-data-table>
     </template>
@@ -65,6 +73,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 export default {
   name: "SectorialIndices",
   data() {
@@ -75,8 +84,8 @@ export default {
       errorMessage: "",
       errorFlag: false,
       loadingFlag: false,
-      sortBy: 'market_movement',
-      sortDesc: false,
+      sortBy: ['stocks_count', 'index_value'],
+      sortDesc: true,
       headers: [
         {
           text: 'Name',
@@ -85,7 +94,8 @@ export default {
           value: 'index_name',
         },
         { text: 'Index', value: 'index_value' },
-        { text: 'Movement', value: 'market_movement' },
+        { text: 'Movement', value: 'market_movement', sortable: false },
+        { text: 'Stocks Count', value: 'stocks_count' },
       ]
     }
   },
@@ -137,22 +147,61 @@ export default {
       });
     },
     populateTableData() {
+      const sectorWiseStockCount = this.calculateStocksCountForSector()
       for (const index_name in this.sectorialIndicesWithDetails) {
         const index_details = {
           "index_name": this.sectorialIndicesWithDetails[index_name].index_name ? this.sectorialIndicesWithDetails[index_name].index_name : "MISC",
-          "index_value": this.sectorialIndicesWithDetails[index_name].index_value,
+          "index_value": _.round(parseFloat(this.sectorialIndicesWithDetails[index_name].index_value.replace(",", "")), 2).toFixed(2),
           "market_movement": this.sectorialIndicesWithDetails[index_name].market_movement,
           "positive_movement": this.sectorialIndicesWithDetails[index_name].positive_movement,
           "sectors": this.sectorialIndicesWithDetails[index_name].sectors,
+          "stocks_count": this.getStocksCountForSector(sectorWiseStockCount, this.sectorialIndicesWithDetails[index_name].index_name)
         }
         this.sectorialIndicesForTable.push(index_details)
+        this.expanded = this.sectorialIndicesForTable
       }
     },
     checkIfIndexHadNoMovement(sector_index) {
       const market_movement = sector_index.market_movement
       const regex = /[.%()[a-zA-Z,\s?]*/g;
       return parseInt(market_movement.replace(regex, '')) === 0;
-    }
+    },
+    calculateStocksCountForSector(){
+      let stocksCount = {}
+      this.priceActions.forEach(priceAction => {
+        const sectorUrl = priceAction.sectorDetailsUrl
+        if (sectorUrl in stocksCount) {
+          stocksCount[sectorUrl] += 1
+        } else {
+          stocksCount[sectorUrl] = 1
+        }
+      })
+      return stocksCount
+    },
+    getStocksCountForSector(sectorWiseStockCount, indexName) {
+      let stocksCountForSector = 0
+      this.sectorialIndicesWithDetails.forEach(sectorialIndex => {
+        if (sectorialIndex.index_name === indexName) {
+          const sectors = sectorialIndex.sectors
+          sectors.forEach(sector => {
+            const sectorUrl = sector.sector_url
+            if (sectorUrl in sectorWiseStockCount) {
+              stocksCountForSector += sectorWiseStockCount[sectorUrl]
+            }
+          })
+        }
+      })
+      return stocksCountForSector
+    },
+    getStocksCountForSubSector(subSectorUrl) {
+      let stocksCount = 0
+      this.priceActions.forEach(priceAction => {
+        if (subSectorUrl === priceAction.sectorDetailsUrl) {
+            stocksCount += 1
+        }
+      })
+      return stocksCount
+    },
   }
 }
 </script>
