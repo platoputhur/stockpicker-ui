@@ -9,6 +9,16 @@
         single-line
         hide-details
     ></v-text-field>
+    <v-btn
+        class="ma-2"
+        color="blue lighten-2"
+        :loading="downloadLoading"
+        :disabled="downloadLoading"
+        @click="downloadExcelFile"
+    >
+      Download&nbsp;
+      <v-icon>mdi-cloud-download</v-icon>
+    </v-btn>
   </v-card-title>
   <v-data-table
       :headers="headers"
@@ -216,6 +226,7 @@ export default {
       shortListedStocks: [],
       errorFlag: false,
       loadingFlag: true,
+      downloadLoading: false,
       errorMessage: "",
       sortBy: 'intradayAllowed',
       sortDesc: true,
@@ -280,6 +291,21 @@ export default {
     });
   },
   methods: {
+    downloadExcelFile() {
+      const self = this
+      self.downloadLoading = true;
+      self.axios.get(
+          "shortlist/download/" + this.shortlistOffset,
+          {responseType: 'blob'},
+    ).then((response) => {
+        let blob = new Blob([response.data]);
+        let link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = "shortlist.xlsx";
+        link.click();
+        self.downloadLoading = false;
+      })
+    },
     getOpeningAndClosingPrices(priceAction) {
       let hourly_prices = [
         priceAction.hour_1_start,
