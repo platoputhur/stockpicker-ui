@@ -37,6 +37,8 @@ export default {
   },
   methods: {
     calculateDataForChart(priceActions) {
+      this.options.labels = []
+      this.stocksCount = []
       let sectorLevelPriceActions = Object.create(null)
       priceActions.forEach(priceAction => {
         let sectorName = priceAction.sectorName

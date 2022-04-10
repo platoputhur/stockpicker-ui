@@ -7,12 +7,12 @@
       <v-data-table
           :headers="headers"
           :items="sectorialIndicesForTable"
-          :items-per-page="5"
+          :items-per-page="10"
           class="elevation-1"
           :loading="loadingFlag"
-          :single-expand="false"
+          :single-expand="true"
           :expanded.sync="expanded"
-          item-key="index_name"
+          item-key="index_key"
           show-expand
           multi-sort
           :sort-by.sync="sortBy"
@@ -150,6 +150,7 @@ export default {
       const sectorWiseStockCount = this.calculateStocksCountForSector()
       for (const index_name in this.sectorialIndicesWithDetails) {
         const index_details = {
+          "index_key": _.random(1, 100000),
           "index_name": this.sectorialIndicesWithDetails[index_name].index_name ? this.sectorialIndicesWithDetails[index_name].index_name : "MISC",
           "index_value": _.round(parseFloat(this.sectorialIndicesWithDetails[index_name].index_value.replace(",", "")), 2).toFixed(2),
           "market_movement": this.sectorialIndicesWithDetails[index_name].market_movement,
@@ -158,7 +159,7 @@ export default {
           "stocks_count": this.getStocksCountForSector(sectorWiseStockCount, this.sectorialIndicesWithDetails[index_name].index_name)
         }
         this.sectorialIndicesForTable.push(index_details)
-        this.expanded = this.sectorialIndicesForTable
+        // this.expanded = this.sectorialIndicesForTable
       }
     },
     checkIfIndexHadNoMovement(sector_index) {

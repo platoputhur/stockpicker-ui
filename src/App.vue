@@ -17,7 +17,7 @@
       </v-container>
     </v-main>
     <v-footer app>
-      2022 &copy; StockPicker
+      2022 &copy; &nbsp;<a href="https://techtuft.com">TechTuft</a>&nbsp;
     </v-footer>
   </v-app>
 
