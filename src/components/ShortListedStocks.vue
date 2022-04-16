@@ -61,12 +61,12 @@
                     v-bind="attrs"
                     v-on="on"
                 >
-                  {{ item.stockName }} <span class="white--text">&#9432;</span>
+                  {{ item.stockName }}&nbsp;({{item.stockNameRepetitions}}) <span class="white--text">&#9432;</span>
                 </span>
               </template>
               <span>{{ "SYMBOL: " + item.stockSymbol }}</span>
             </v-tooltip>
-            <span v-else>{{ item.stockName }}</span>
+            <span v-else>{{ item.stockName }}&nbsp;({{item.stockNameRepetitions}}) </span>
         </span>
       </a>
       <span v-else>
@@ -391,7 +391,8 @@ export default {
           profit: this.getProfitPercentage(stock),
           bs: this.getBuySellPrices(stock),
           sl: this.getStopLossPrice(stock).toFixed(2),
-          fp: this.getForecastedProfit(stock)
+          fp: this.getForecastedProfit(stock),
+          stockNameRepetitions: stock.stock_name_repetitions
         }
         this.priceActionsForTable.push(paObject);
       });
