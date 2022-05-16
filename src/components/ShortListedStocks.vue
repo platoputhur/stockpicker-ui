@@ -86,6 +86,10 @@
       </span>
     </template>
     <!-- eslint-disable-next-line vue/valid-v-slot -->
+    <template v-slot:item.volume="{ item }">
+      <span class="small-font">{{ item.volume }}</span>
+    </template>
+    <!-- eslint-disable-next-line vue/valid-v-slot -->
     <template v-slot:item.intradayAllowed="{ item }">
       <span v-if="item.intradayAllowed === true"> <v-icon light class="green--text">mdi-check-circle</v-icon> </span>
       <span v-else> <v-icon class="red--text">mdi-close-thick</v-icon> </span>
@@ -238,6 +242,7 @@ export default {
           value: 'stockName',
         },
         { text: 'IDO', value: 'intradayAllowed' },
+        { text: 'Vol', value: 'volume' },
         { text: 'Sector', value: 'sectorName' },
         { text: 'Opening', value: 'dminus2start' },
         { text: 'Closing', value: 'dminus2end' },
@@ -376,6 +381,7 @@ export default {
         let paObject = {
           stockName: this.convertToTitleCase(stock.stock_name.replaceAll("-", " ").trim()),
           stockSymbol: stock.symbol,
+          volume: stock.volume === null ? 'NA' : stock.volume,
           stockDetailsUrl: stock.stock_url,
           sectorDetailsUrl: stock.stock_sector_url,
           intradayAllowed: stock.is_intraday_allowed,
