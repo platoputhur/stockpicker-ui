@@ -1,13 +1,13 @@
 <template>
   <v-container fluid>
-    <v-row>
-      <v-col cols="12" lg="6">
-        <SectorialChart />
-      </v-col>
-      <v-col cols="12" lg="6">
-        <SectorialIndices />
-      </v-col>
-    </v-row>
+<!--    <v-row>-->
+<!--      <v-col cols="12" lg="6">-->
+<!--        <SectorialChart />-->
+<!--      </v-col>-->
+<!--      <v-col cols="12" lg="6">-->
+<!--        <SectorialIndices />-->
+<!--      </v-col>-->
+<!--    </v-row>-->
     <v-row>
       <v-col cols="12">
         <ShortListedStocks
@@ -48,15 +48,15 @@
 
 <script>
 import ShortListedStocks from "@/components/ShortListedStocks";
-import SectorialChart from "@/components/SectorialChart";
-import SectorialIndices from "@/components/SectorialIndices";
+// import SectorialChart from "@/components/SectorialChart";
+// import SectorialIndices from "@/components/SectorialIndices";
 
 export default {
   name: "DashboardPage",
   components: {
     ShortListedStocks,
-    SectorialChart,
-    SectorialIndices,
+    // SectorialChart,
+    // SectorialIndices,
   },
   data() {
     return {
